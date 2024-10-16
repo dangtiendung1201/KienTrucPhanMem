@@ -4,13 +4,23 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const Priority = {
-    High: "highpriority",
-    Low: "lowpriority"
+    High: "highPriority",
+    Low: "lowPriority"
 };
 
-export default async function (context, myTimer) {
-    const connectionString = process.env.ServiceBusConnection;
+async function sendMessage() {
+    const connectionString = process.env.CONNECTION_STRING;
     const queueName = process.env.TOPIC_NAME;
+
+    // Kiểm tra giá trị của biến môi trường
+    console.log("ServiceBusConnection:", connectionString);
+    console.log("TOPIC_NAME:", queueName);
+
+    if (!connectionString || !queueName) {
+        console.error("Connection string or topic name is not defined.");
+        return;
+    }
+
     const sbClient = new ServiceBusClient(connectionString);
     const sender = sbClient.createSender(queueName);
 
@@ -25,7 +35,7 @@ export default async function (context, myTimer) {
             };
 
             await sender.sendMessages(lowPriorityMessage);
-            context.log(`Sent: ${lowPriorityMessage.body}`);
+            console.log(`Sent: ${lowPriorityMessage.body}`);
 
             // Gửi thông điệp ưu tiên cao
             const highPriorityMessageId = generateMessageId();
@@ -36,7 +46,7 @@ export default async function (context, myTimer) {
             };
 
             await sender.sendMessages(highPriorityMessage);
-            context.log(`Sent: ${highPriorityMessage.body}`);
+            console.log(`Sent: ${highPriorityMessage.body}`);
         }
     } finally {
         await sender.close();
@@ -47,3 +57,5 @@ export default async function (context, myTimer) {
 function generateMessageId() {
     return 'msg-' + Math.random().toString(36).substr(2, 9);
 }
+
+sendMessage().catch(console.error);
