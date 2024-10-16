@@ -5,7 +5,7 @@ dotenv.config();
 
 const connectionString = process.env.CONNECTION_STRING;
 const topicName = process.env.TOPIC_NAME;
-const subscriptionName = process.env.HIGH_PRIORITY_SUBSCRIPTION_NAME;
+const subscriptionName = process.env.LOW_PRIORITY_SUBSCRIPTION_NAME;
 
 const sbClient = new ServiceBusClient(connectionString);
 const receiver = sbClient.createReceiver(topicName, subscriptionName);
