@@ -5,12 +5,16 @@ dotenv.config();
 
 const connectionString = process.env.CONNECTION_STRING;
 const topicName = process.env.TOPIC_NAME;
-const subscriptionNames = [process.env.HIGH_PRIORITY_SUBSCRIPTION_NAME, process.env.LOW_PRIORITY_SUBSCRIPTION_NAME]; 
+const subscriptionNames = [process.env.HIGH_PRIORITY_SUBSCRIPTION_NAME, process.env.LOW_PRIORITY_SUBSCRIPTION_NAME];
 
 async function createConsumer(subscriptionName) {
     const client = new ServiceBusClient(connectionString);
     const receiver = client.createReceiver(topicName, subscriptionName);
 
+    return { client, receiver };
+}
+
+async function receiveMessages(receiver, subscriptionName) {
     const processMessage = async (message) => {
         console.log(`Received message from ${subscriptionName}: ${message.body}`);
         await receiver.completeMessage(message);
@@ -24,10 +28,6 @@ async function createConsumer(subscriptionName) {
         processMessage,
         processError
     });
-
-    console.log(`Listening for messages from subscription: ${subscriptionName}`);
-
-    return { client, receiver };
 }
 
 async function main() {
@@ -39,13 +39,20 @@ async function main() {
         consumers.push(consumer);
     }
 
+    for (let index = 0; index < consumers.length; index++) {
+        const consumer = consumers[index];
+        // await receiveMessages(consumer.receiver, subscriptionNames[index]);
+        console.log("Received message from subscription: ", subscriptionNames[index]);
+        await receiveMessages(consumer.receiver, subscriptionNames[index]);
+    }        
+
     setTimeout(async () => {
         for (const { client, receiver } of consumers) {
             await receiver.close();
             await client.close();
         }
         console.log("Stopped all consumers.");
-    }, 30000); 
+    }, 30000);
 }
 
 main().catch((err) => {
