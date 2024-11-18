@@ -21,7 +21,7 @@ Là kiểu kiến trúc:
 ## 🧩 Phân loại <a name="type"></a>
 Có hai cách tiếp cận chính để triển khai Priority Queue Pattern:
 ### Single queue
-![image](https://hackmd.io/_uploads/HkYWJ6Ob1l.png)
+![upload_5d369a25428ff4b54a342caee1219a8c](https://github.com/user-attachments/assets/d2c92153-86a9-4490-8fcb-67ffc46ce90c)
 **Cấu trúc:** Tất cả message được gửi đến một hàng đợi và application (producer) gán một mức độ ưu tiên cho mỗi message sau đó gửi message đến hàng đợi. Hàng đợi sắp xếp các message theo mức độ ưu tiên, đảm bảo rằng consumer xử lý các thông điệp có mức độ ưu tiên cao hơn trước các message có mức độ ưu tiên thấp hơn.
 
 **Trường hợp sử dụng:** Thích hợp với các ứng dụng đơn giản trong cài đặt và bảo trì như: hệ thống thông báo ưu tiên, hệ thống xử lý đơn hàng.
